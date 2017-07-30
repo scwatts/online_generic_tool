@@ -1,0 +1,16 @@
+{% load i18n %}{% autoescape off %}
+Hi {{ user.first_name }},
+
+You're receiving this email because you requested a user account on {{ site_name }}.
+
+Please go to the following page to verify your email address:
+{% block verify_link %}
+https://{{ domain }}{% url 'email_verify' token=token %}
+{% endblock %}
+Your username, in case you've forgotten: {{ user.get_username }}
+
+Thanks for registering with our site!
+
+The {{ site_name }} team
+
+{% endautoescape %}

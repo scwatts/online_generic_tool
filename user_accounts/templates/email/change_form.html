@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+{% block content %}
+
+<p>Your current verified email is {{ user.email }}. To update this, enter a new email address below.</p>
+
+<form method="post">{% csrf_token %}
+    {{ form.email.errors }}
+    <p><label for="id_email">New email address:<label> {{ form.email }} <input type="submit" value="Change my email" /></p>
+</form>
+
+{% endblock %}
