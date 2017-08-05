@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}{{ title }}{% endblock %}
-{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+{% block title %}Update email{% endblock %}
+{% block content_title %}<h1>Update email</h1>{% endblock %}
+
+{% block extra_header %}<link rel="stylesheet" href="{% static "css/accounts.css" %}">{% endblock %}
+
 {% block content %}
-
-<p>Your current verified email is {{ user.email }}. To update this, enter a new email address below.</p>
-
-<form method="post">{% csrf_token %}
+{% include 'account/navigation.html' %}
+<p>{% if user.email %}Your current verified email is {{ user.email }}{% else %}You currently have no verified emails{% endif %}. To update this, enter a new email address below.</p>
+<form method="post">
+    {% csrf_token %}
     {{ form.email.errors }}
     <p><label for="id_email">New email address:<label> {{ form.email }} <input type="submit" value="Change my email" /></p>
 </form>
-
 {% endblock %}

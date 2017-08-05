@@ -1,4 +1,4 @@
-{% load i18n %}{% autoescape off %}
+{% autoescape off %}
 Hi {{ user.first_name }},
 
 You're receiving this email because you requested an email change for you account on {{ site_name }}.
@@ -10,5 +10,4 @@ https://{{ domain }}{% url 'email_verify' token=token %}
 Your username, in case you've forgotten: {{ user.get_username }}
 
 The {{ site_name }} team
-
 {% endautoescape %}

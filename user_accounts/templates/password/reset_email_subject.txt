@@ -1,3 +1,3 @@
-{% load i18n %}{% autoescape off %}
+{% autoescape off %}
 Password reset on {{ site_name }}
 {% endautoescape %}

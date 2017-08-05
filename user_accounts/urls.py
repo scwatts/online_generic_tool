@@ -15,6 +15,8 @@ urlpatterns = [
 
     url(r'^email_verify/(?P<token>[a-z0-9]+)*$', views.email_verify, name='email_verify'),
 
+    url(r'^resend_verification/$', views.resend_verification, name='resent_verification'),
+
 
     url(r'^login/$', auth_views.login,
         {'template_name': 'login.html',
@@ -25,7 +27,7 @@ urlpatterns = [
 
     url(r'^account/$', views.account, name='account'),
 
-    url(r'^email_change/$', views.email_change, name='verify_email'),
+    url(r'^email_change/$', views.email_change, name='email_change'),
 
 
     url('^password_change/$', views.password_change, name='password_change'),

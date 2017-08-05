@@ -1,5 +1,8 @@
+import datetime
+import hashlib
+import os
+
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
-from django.utils.http import urlsafe_base64_decode
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
@@ -11,14 +14,19 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash, get_user_model, logout as auth_logout
 from django.contrib.auth.tokens import default_token_generator
-from .decorators import requires_verified_email
-
-
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm, AuthenticationForm
-from .forms import CustomUserCreationForm, EmailChangeForm
-from .models import Profile
+
+from django.core.mail import send_mail
+
+from django.template import loader
 
 from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
+from django.utils import timezone
+
+from .forms import CustomUserCreationForm, EmailChangeForm
+from .models import Profile
+from .decorators import requires_verified_email
 
 
 @sensitive_post_parameters()
@@ -45,7 +53,6 @@ def register_account(request):
 @never_cache
 def logout(request):
     auth_logout(request)
-    messages.success(request, 'Successfully logged out', extra_tags='alert-success')
     return redirect(reverse('home_page'))
 
 
@@ -55,32 +62,66 @@ def email_verify(request, token=None):
     # Get user profile
     profile = get_object_or_404(Profile, user=request.user)
 
-    # Check if the user wants to replace current email with a new verified one
-    if request.user.is_verified and profile.unverified_email:
-        # Get the expected verification token and compare with specified
-        if profile.verification_token == token:
-            request.user.email = profile.unverified_email
-            profile.unverified_email = ''
-            request.user.save()
-            profile.save()
-            messages.success(request, 'Your new email has been verified', extra_tags='alert-success')
-        else:
-            messages.error(request, 'Tokens do not match', extra_tags='alert-danger')
-
-        return redirect(reverse('home_page'))
-
     # Ensure the user has not already verified the current address
-    if request.user.is_verified:
+    if not profile.unverified_email:
         messages.error(request, 'The email associated with this account is already verified', extra_tags='alert-warning')
         return redirect(reverse('home_page'))
+
+    # TODO: resend verification token; redirect to change email page with resend option?
+    # First check that the token has not expired
+    if timezone.now() > profile.token_expiration:
+        messages.error(request, 'The email verification token has expired', extra_tags='alert-warning')
+        return render(request, 'email/verify.html')
 
     # Get the expected verification token and compare with specified
     if profile.verification_token == token:
         request.user.is_verified = True
+        request.user.email = profile.unverified_email
+        profile.verification_token = ''
+        profile.unverified_email = ''
+        profile.token_expiration = datetime.datetime.utcfromtimestamp(0)
         request.user.save()
+        profile.save()
         messages.success(request, 'Your account has been verified', extra_tags='alert-success')
+        return redirect(reverse('home_page'))
     else:
-        messages.error(request, 'Tokens do not match', extra_tags='alert-danger')
+        messages.error(request, 'Could not verify your email', extra_tags='alert-danger')
+
+    return render(request, 'email/verify.html')
+
+
+@login_required
+def resend_verification(request):
+    # Get user profile
+    profile = get_object_or_404(Profile, user=request.user)
+
+    # Check that the user has an unverified email to verify
+    if not profile.unverified_email:
+        messages.error(request, 'You don\'t have any email address to verify', extra_tags='alert-warning')
+        return redirect(reverse('home_page'))
+
+
+    # TODO: can we refactor this into a function (similar blocks in forms.py)
+    # Generate new token and send email
+    profile.verification_token = hashlib.sha256(os.urandom(512)).hexdigest()[:32]
+    profile.token_expiration = timezone.now() + datetime.timedelta(minutes=20)
+    profile.save()
+
+    messages.success(request, 'Resent verification code', extra_tags='alert-success')
+
+    context = {
+            'email': profile.unverified_email,
+            'domain': request.get_host(),
+            'site_name': request.get_host(),
+            'user': request.user,
+            'token': profile.verification_token
+            }
+
+    subject = '%s verification code' % request.get_host()
+    body = loader.render_to_string('register/email.html', context)
+
+    # TODO: make bounce address more flexible
+    send_mail(subject, body, 'inbox@stephen.ac', [profile.unverified_email], fail_silently=False)
 
     return redirect(reverse('home_page'))
 
@@ -162,6 +203,7 @@ def password_reset(request):
 
     return render(request, 'password/reset_form.html', context)
 
+
 @sensitive_post_parameters()
 @never_cache
 def password_reset_confirm(request, uidb64=None, token=None):
@@ -200,7 +242,6 @@ def password_reset_confirm(request, uidb64=None, token=None):
     return render(request, 'password/reset_confirm.html', context)
 
 
-
-@requires_verified_email
+@login_required
 def account(request):
-    return HttpResponse('The user account page')
+    return render(request, 'account/home.html')

@@ -15,9 +15,13 @@ from django.contrib.auth.forms import UserCreationForm, UsernameField
 
 class CustomUserCreationForm(UserCreationForm):
 
+    email = forms.EmailField(label="Email", max_length=254)
+
+    field_order = ('username', 'first_name', 'last_name', 'email')
+
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('username', 'first_name', 'last_name')
         field_classes = {'username': UsernameField}
 
     def save(self, commit=True, request=None):
@@ -31,6 +35,7 @@ class CustomUserCreationForm(UserCreationForm):
         # Generate verification token and commit to database
         profile = Profile()
         profile.user = user
+        profile.unverified_email = self.cleaned_data['email']
         profile.verification_token = hashlib.sha256(os.urandom(512)).hexdigest()[:32]
         profile.token_expiration = timezone.now() + datetime.timedelta(minutes=20)
 
@@ -40,7 +45,7 @@ class CustomUserCreationForm(UserCreationForm):
         # After successful commit transcation, email user verification token
         # TODO: would this fit better somewhere else?
         context = {
-                'email': user.email,
+                'email': profile.unverified_email,
                 'domain': request.get_host(),
                 'site_name': request.get_host(),
                 'user': user,
@@ -51,12 +56,13 @@ class CustomUserCreationForm(UserCreationForm):
         body = loader.render_to_string('register/email.html', context)
 
         # TODO: make bounce address more flexible
-        send_mail(subject, body, 'inbox@stephen.ac', [user.email], fail_silently=False)
+        send_mail(subject, body, 'inbox@stephen.ac', [profile.unverified_email], fail_silently=False)
 
         return user
 
 
 class EmailChangeForm(forms.Form):
+
     email = forms.EmailField(label="Email", max_length=254)
 
     error_messages = {
@@ -69,14 +75,19 @@ class EmailChangeForm(forms.Form):
         super(EmailChangeForm, self).__init__(*args, **kwargs)
 
 
-    def save(self):
-        # Get user profile
-        profile = get_object_or_404(Profile, user=self.request.user)
+    def clean(self):
+        # Call parent implementation
+        super(EmailChangeForm, self).clean()
 
         # Email must not be in use
         matching_emails = User.objects.filter(email=self.cleaned_data['email']).values('email')
         if matching_emails:
             raise forms.ValidationError(self.error_messages['email_exists'], code='email_exists')
+
+
+    def save(self):
+        # Get user profile
+        profile = get_object_or_404(Profile, user=self.request.user)
 
         # Update profile with unverified email and associate verification token
         profile.unverified_email = self.cleaned_data['email']
