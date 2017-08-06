@@ -4,7 +4,7 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         {% include 'header_includes.html' %}
-        {% block extra_header %}{% endblock %}
+        {% block extra_header %}<link rel="stylesheet" href="{% static "css/accounts.css" %}">{% endblock %}
     </head>
     <body>
         <div class="container">
@@ -12,8 +12,11 @@
             {% include 'navigation.html' %}
             <div class="content">
                 {% block content_title %}{% endblock %}
+                {% include 'account/navigation.html' %}
+                <div class='account_content'>
                 {% include 'messages.html' %}
-                {% block content %}{% endblock %}
+                {% block account_content %}{% endblock %}
+                </div>
             </div>
         </div>
     </body>

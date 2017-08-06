@@ -1,13 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'account/base.html' %}
 
 {% block title %}Verify email{% endblock %}
 {% block content_title %}<h1>Verify email</h1>{% endblock %}
-{% block content %}
 
-<p></p>
-
-<a href='/resend_verification'>Resend verification email</a>
-<a href='/email_change'>Change email</a>
-
-
+{% block account_content %}
+<p>Please enter token to verify email</p>
+<form method="post">
+    {% csrf_token %}
+    <p><label for="id_token">Verification token:<label> {{ form.token }} <input type="submit" value="Verify email" /></p>
+</form>
+<p>If you have not recieved your verification token, you can try resending it</p>
+<p><form method="get" action="{% url 'resend_verification' %}"><input type="submit" value="Resend verification" /></p>
 {% endblock %}

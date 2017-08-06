@@ -24,7 +24,7 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.utils import timezone
 
-from .forms import CustomUserCreationForm, EmailChangeForm
+from .forms import CustomUserCreationForm, EmailChangeForm, EmailVerifyForm
 from .models import Profile
 from .decorators import requires_verified_email
 
@@ -62,19 +62,34 @@ def email_verify(request, token=None):
     # Get user profile
     profile = get_object_or_404(Profile, user=request.user)
 
+    # Attempt to get a token from user
+    if token:
+        input_token = token
+        form = EmailVerifyForm()
+    else:
+        if request.method == 'POST':
+            form = EmailVerifyForm(data=request.POST)
+            if form.is_valid():
+                input_token = form.cleaned_data['token']
+        else:
+            form = EmailVerifyForm()
+            return render(request, 'email/verify.html', {'form': form})
+
+    # Once we have a token, attempt to verify
     # Ensure the user has not already verified the current address
     if not profile.unverified_email:
         messages.error(request, 'The email associated with this account is already verified', extra_tags='alert-warning')
-        return redirect(reverse('home_page'))
 
-    # TODO: resend verification token; redirect to change email page with resend option?
-    # First check that the token has not expired
-    if timezone.now() > profile.token_expiration:
+    # Make sure there is a token to verify against
+    elif not profile.verification_token:
+        messages.error(request, 'There is no token to verify', extra_tags='alert-danger')
+
+    # Check that the token has not expired
+    elif timezone.now() > profile.token_expiration:
         messages.error(request, 'The email verification token has expired', extra_tags='alert-warning')
-        return render(request, 'email/verify.html')
 
     # Get the expected verification token and compare with specified
-    if profile.verification_token == token:
+    elif profile.verification_token == input_token:
         request.user.is_verified = True
         request.user.email = profile.unverified_email
         profile.verification_token = ''
@@ -83,11 +98,10 @@ def email_verify(request, token=None):
         request.user.save()
         profile.save()
         messages.success(request, 'Your account has been verified', extra_tags='alert-success')
-        return redirect(reverse('home_page'))
     else:
         messages.error(request, 'Could not verify your email', extra_tags='alert-danger')
 
-    return render(request, 'email/verify.html')
+    return render(request, 'email/verify.html', {'form': form})
 
 
 @login_required
@@ -97,8 +111,8 @@ def resend_verification(request):
 
     # Check that the user has an unverified email to verify
     if not profile.unverified_email:
-        messages.error(request, 'You don\'t have any email address to verify', extra_tags='alert-warning')
-        return redirect(reverse('home_page'))
+        messages.error(request, 'You don\'t have any email addresses to verify', extra_tags='alert-warning')
+        return redirect(reverse('email_verify'))
 
 
     # TODO: can we refactor this into a function (similar blocks in forms.py)
@@ -106,8 +120,6 @@ def resend_verification(request):
     profile.verification_token = hashlib.sha256(os.urandom(512)).hexdigest()[:32]
     profile.token_expiration = timezone.now() + datetime.timedelta(minutes=20)
     profile.save()
-
-    messages.success(request, 'Resent verification code', extra_tags='alert-success')
 
     context = {
             'email': profile.unverified_email,
@@ -123,7 +135,8 @@ def resend_verification(request):
     # TODO: make bounce address more flexible
     send_mail(subject, body, 'inbox@stephen.ac', [profile.unverified_email], fail_silently=False)
 
-    return redirect(reverse('home_page'))
+    messages.success(request, 'Resent verification code', extra_tags='alert-success')
+    return redirect(reverse('email_verify'))
 
 
 @csrf_protect

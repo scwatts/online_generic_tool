@@ -75,9 +75,9 @@ class EmailChangeForm(forms.Form):
         super(EmailChangeForm, self).__init__(*args, **kwargs)
 
 
-    def clean(self):
+    def validate(self):
         # Call parent implementation
-        super(EmailChangeForm, self).clean()
+        super(EmailChangeForm, self).validate()
 
         # Email must not be in use
         matching_emails = User.objects.filter(email=self.cleaned_data['email']).values('email')
@@ -109,3 +109,8 @@ class EmailChangeForm(forms.Form):
 
         # TODO: make bounce address more flexible
         send_mail(subject, body, 'inbox@stephen.ac', [profile.unverified_email], fail_silently=False)
+
+
+class EmailVerifyForm(forms.Form):
+
+    token = forms.CharField(label='Verification token', max_length=32)

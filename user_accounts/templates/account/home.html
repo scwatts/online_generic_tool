@@ -1,14 +1,8 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'account/base.html' %}
 
 {% block title %}User management{% endblock %}
 {% block content_title %}<h1>User management</h1>{% endblock %}
 
-{% block extra_header %}<link rel="stylesheet" href="{% static "css/accounts.css" %}">{% endblock %}
-
-{% block content %}
-{% include 'account/navigation.html' %}
-<div>
-    <p>Welcome{% if user.is_authenticated %} {{ user.username }}! You are {% if not user.is_verified %}not {% endif %}verified.{% else %}!{% endif %}</p>
-</div>
+{% block account_content %}
+<p>Welcome{% if user.is_authenticated %} {{ user.username }}! You are {% if not user.is_verified %}not {% endif %}verified.{% else %}!{% endif %}</p>
 {% endblock %}

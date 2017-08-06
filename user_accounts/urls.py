@@ -15,7 +15,7 @@ urlpatterns = [
 
     url(r'^email_verify/(?P<token>[a-z0-9]+)*$', views.email_verify, name='email_verify'),
 
-    url(r'^resend_verification/$', views.resend_verification, name='resent_verification'),
+    url(r'^resend_verification/$', views.resend_verification, name='resend_verification'),
 
 
     url(r'^login/$', auth_views.login,
