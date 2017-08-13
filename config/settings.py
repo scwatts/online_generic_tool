@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    'tool',
+    'django_rq',
     'user_accounts',
     #'django.contrib.admin',
     'django.contrib.auth',
@@ -84,6 +86,14 @@ DATABASES = {
     }
 }
 
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+    }
+}
+
 
 # Email server
 EMAIL_HOST = 'stephen.ac'
@@ -120,6 +130,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+# Set user upload variables
+MEDIA_ROOT = 'user_files/'
+MEDIA_URL = 'job_files/'
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
