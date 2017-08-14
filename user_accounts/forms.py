@@ -19,10 +19,23 @@ class CustomUserCreationForm(UserCreationForm):
 
     field_order = ('username', 'first_name', 'last_name', 'email')
 
+    UserCreationForm.error_messages['email_exists'] = 'This email is already in use'
+
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name')
         field_classes = {'username': UsernameField}
+
+
+    def validate(self):
+        # Call parent implementation
+        super(CustomUserCreationForm, self).validate()
+
+        # Email must not be in use
+        matching_emails = User.objects.filter(email=self.cleaned_data['email']).values('email')
+        if matching_emails:
+            raise forms.ValidationError(self.error_messages['email_exists'], code='email_exists')
+
 
     def save(self, commit=True, request=None):
         # Initialise new user from model
@@ -64,6 +77,7 @@ class CustomUserCreationForm(UserCreationForm):
 class EmailChangeForm(forms.Form):
 
     email = forms.EmailField(label="Email", max_length=254)
+
 
     error_messages = {
         'email_exists': 'This email is already in use'

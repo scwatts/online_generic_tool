@@ -25,7 +25,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils import timezone
 
 from .forms import CustomUserCreationForm, EmailChangeForm, EmailVerifyForm
-from .models import Profile
+from .models import Profile, User
 from .decorators import requires_verified_email
 
 
@@ -74,6 +74,13 @@ def email_verify(request, token=None):
         else:
             form = EmailVerifyForm()
             return render(request, 'email/verify.html', {'form': form})
+
+    # In exceptionally rare circumstances, we can get the same user with two accounts attempting to
+    # verify a single email address across two accounts. Check for this now.
+    matching_emails = User.objects.filter(email=profile.unverified_email).values('email')
+    if matching_emails:
+        messages.error(request, 'This email address is already in use', extra_tags='alert-warning')
+        return render(request, 'email/verify.html', {'form': form})
 
     # Once we have a token, attempt to verify
     # Ensure the user has not already verified the current address

@@ -7,7 +7,7 @@ class User(AbstractUser):
     # Also require email to be unique among all users
     first_name = models.CharField('first name', max_length=30)
     last_name = models.CharField('last name', max_length=150)
-    email = models.EmailField('email address', unique=True)
+    email = models.EmailField('email address', unique=True, null=True)
 
     # Status of email verification
     is_verified = models.BooleanField(
@@ -24,7 +24,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
 
     # Email address
-    unverified_email = models.EmailField('unverified email address', unique=True, blank=True)
+    unverified_email = models.EmailField('unverified email address', blank=True)
 
     # Fields for email verification via token
     verification_token = models.CharField('verification token', max_length=32)
