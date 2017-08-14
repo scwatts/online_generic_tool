@@ -20,5 +20,15 @@ def submit_job(job_instance):
     cmd_template = '%s %s %s'
     cmd = cmd_template % (binary, params_str, job_instance.input_file.path)
 
-    # Execute command
+    # Update job status to running and execute command
+    job_instance.status = 'running'
+    job_instance.save()
     p = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    # Check process return code
+    if p.returncode != 0:
+        job_instance.status = 'failed'
+        job_instance.stderr = p.stderr
+    else:
+        job_instance.status = 'completed'
+    job_instance.save()

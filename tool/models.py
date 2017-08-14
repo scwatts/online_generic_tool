@@ -11,9 +11,11 @@ class Job(models.Model):
 
     job_name = models.CharField(max_length=255)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    datetime = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=32)
     input_file = models.FileField(upload_to=user_run_input_directory)
     output_dir = models.FileField()
+    stderr = models.TextField(blank=True)
 
 
 class JobParameters(models.Model):
