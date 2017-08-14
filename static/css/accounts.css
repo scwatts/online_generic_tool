@@ -1,5 +1,11 @@
+div.account_content {
+	margin-left: 20%;
+	padding-left: 15px;
+}
+
 div.account_navigation {
-	float: left
+	float: left;
+	width: 20%;
 }
 
 .account_navigation ul {
