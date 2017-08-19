@@ -1,0 +1,21 @@
+{% load static %}
+
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        {% include 'header_includes.html' %}
+        {% block extra_header %}<link rel="stylesheet" href="{% static "css/tool.css" %}">{% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            {% include 'header_content.html' %}
+            {% include 'navigation.html' %}
+            <div class="content">
+                {% block content_title %}{% endblock %}
+                {% include 'messages.html' %}
+                {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

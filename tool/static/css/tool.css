@@ -1,0 +1,7 @@
+table.job_table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table.job_table td {
+    padding: 4px;
+}

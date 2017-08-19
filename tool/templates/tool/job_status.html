@@ -1,0 +1,23 @@
+{% extends 'tool/base.html' %}
+
+{% block title %}Job Status{% endblock %}
+{% block content_title %}<h1>Job Status</h1>{% endblock %}
+
+{% block content %}
+<table class='job_table'>
+    <tr>
+        <th>Job name</th>
+        <th>Input file</th>
+        <th>Status</th>
+        <th>Time submitted</th>
+    </tr>
+    {% for job in user_job_list %}
+    <tr>
+        <td>{{ job.job_name }}</td>
+        <td><a href="{% url 'serve_file' fileurl=job.input_file.url %}">{{ job.input_file.basename }}</a></td>
+        <td>{{ job.status }}</td>
+        <td>{{ job.datetime }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
