@@ -26,6 +26,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+PROD = False
 
 ALLOWED_HOSTS = []
 
