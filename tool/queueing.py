@@ -5,8 +5,13 @@ from rq import Queue
 from redis import Redis
 
 
+from django.conf import settings
+
+
 def enqueue(function, *args, **kwargs):
-    redis_connection = Redis()
+    redis_connection = Redis(host=settings.REDIS_HOST,
+                             port=settings.REDIS_PORT,
+                             db=settings.REDIS_DB)
     queue = Queue(connection=redis_connection)
 
     queue.enqueue(function, *args, **kwargs)

@@ -88,6 +88,8 @@ DATABASES = {
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+REDIS_QUEUES = ['default']
+REDIS_DB = 0
 
 
 # Email server
