@@ -8,8 +8,6 @@ from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
 
-import django_rq
-
 from .forms import JobSubmissionForm
 from .models import Job
 from user_accounts.decorators import requires_verified_email
@@ -32,9 +30,7 @@ def job_submit(request):
             job = form.save(request)
 
             # Queue the job
-            #queue = django_rq.get_queue('default')
-            #queue.enqueue(tool.queueing.submit_job, job)
-            queue = django_rq.enqueue(tool.queueing.submit_job, job)
+            tool.queueing.enqueue(tool.queueing.submit_job, job)
             messages.success(request, 'Job submitted', extra_tags='alert-success')
     else:
         form = JobSubmissionForm()

@@ -1,6 +1,17 @@
 import subprocess
 
 
+from rq import Queue
+from redis import Redis
+
+
+def enqueue(function, *args, **kwargs):
+    redis_connection = Redis()
+    queue = Queue(connection=redis_connection)
+
+    queue.enqueue(function, *args, **kwargs)
+
+
 def submit_job(job_instance):
     # Collect parameters and format to string
     # TODO: consider whether this is secure enough

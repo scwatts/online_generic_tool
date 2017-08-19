@@ -34,7 +34,6 @@ ALLOWED_HOSTS = []
 # Application definition
 INSTALLED_APPS = [
     'tool',
-    'django_rq',
     'user_accounts',
     #'django.contrib.admin',
     'django.contrib.auth',
@@ -87,13 +86,8 @@ DATABASES = {
     }
 }
 
-RQ_QUEUES = {
-    'default': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-    }
-}
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
 
 
 # Email server
