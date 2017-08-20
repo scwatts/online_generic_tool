@@ -18,7 +18,11 @@ class Command(BaseCommand):
                 'user2': [
                         {'job_name': 'user2_first', 'owner_id': 2},
                         {'job_name': 'user2_second', 'owner_id': 2},
-                        {'job_name': 'user2_third', 'owner_id': 2}
+                        {'job_name': 'user2_third', 'owner_id': 2},
+                        {'job_name': 'user2_fourth', 'owner_id': 2},
+                        {'job_name': 'user2_fifth', 'owner_id': 2},
+                        {'job_name': 'user2_sixth', 'owner_id': 2},
+                        {'job_name': 'user2_seventh', 'owner_id': 2}
                     ],
                 'user3':
                     [

@@ -34,18 +34,13 @@ class Command(BaseCommand):
                                            port=settings.REDIS_PORT,
                                            db=settings.REDIS_DB)
 
-            def worker_on_active_queue(worker):
-                queue_names = (q.name for q in worker.queues)
-                return settings.REDIS_QUEUE_ACTIVE in queue_names
-
             # Get the queues
             active_queue = rq.Queue(settings.REDIS_QUEUE_ACTIVE, connection=redis_connection)
             blocked_queue = rq.Queue(settings.REDIS_QUEUE_BLOCKED, connection=redis_connection)
 
-            with rq.Connection(redis_connection):
-                # Collect worker information
-                workers = [w for w in rq.Worker.all() if worker_on_active_queue(w)]
-                idle_worker_count = len([w for w in workers if w.get_state() == 'idle'])
+            with rq.Connection(redis_connection) as conn:
+                # Get count of idle workers
+                idle_worker_count = get_idle_work_count(conn)
 
                 # TODO: implement limit for total jobs a user can have active
                 for owner in owner_jobs:
@@ -56,6 +51,7 @@ class Command(BaseCommand):
                     # Get job from this user to queue
                     job_model = owner_jobs[owner].pop(0)
 
+                    # TODO: warning the execute_job has an out-dated job model instance
                     # Remove job from blocked queue and add it to active
                     redis_job = blocked_queue.fetch_job(job_model.redis_id)
                     blocked_queue.remove(redis_job)
@@ -67,8 +63,18 @@ class Command(BaseCommand):
                     job_model.save()
 
                     # Update number of idle workers after a small delay
-                    time.sleep(0.05)
-                    idle_worker_count = len([w for w in workers if w.get_state() == 'idle'])
+                    idle_worker_count = get_idle_work_count(conn)
 
             # Loop every couple of minutes
             time.sleep(options['interval'])
+
+
+def get_idle_work_count(rq_connection):
+    # Function to match worker on active queues
+    def worker_on_active_queue(worker):
+        queue_names = (q.name for q in worker.queues)
+        return settings.REDIS_QUEUE_ACTIVE in queue_names
+
+    # Collect worker information
+    workers = [w for w in rq.Worker.all() if worker_on_active_queue(w)]
+    return len([w for w in workers if w.get_state() == 'idle'])
