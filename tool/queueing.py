@@ -36,10 +36,11 @@ def execute_job(job_id):
     param_gen = ((f.attname, f.value_from_object(param_instance)) for f in param_fields)
     params_str = ' '.join(['--%s %s' % (fn, fv) for fn, fv in param_gen if fv])
 
-    # Add output directory to entry and parameter string
+    # Add output directory and prefix to entry and parameter string
     job_instance.run_dir.name = 'user_%s/run_%s/' % (job_instance.owner, job_instance.id)
     output_dir = pathlib.Path(job_instance.run_dir.path, 'output')
-    params_str = '%s --outdir %s --prefix run' % (params_str, output_dir)
+    prefix = pathlib.Path(job_instance.input_file.name).stem
+    params_str = '%s --outdir %s --prefix %s' % (params_str, output_dir, prefix)
 
     # Finialise command
     # TEMP: binary

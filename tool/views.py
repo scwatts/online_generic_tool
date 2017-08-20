@@ -86,7 +86,8 @@ def job_view(request, job_id=None):
         messages.error(request, 'This is not your job', extra_tags='alert-danger')
         return redirect(reverse('job_status'))
 
-    context = {'files': ('run.%s' % ext for ext in FILES_EXTENSIONS),
+    prefix = pathlib.Path(job.input_file.name).stem
+    context = {'files': ('%s.%s' % (prefix, ext) for ext in FILES_EXTENSIONS),
                'job_id': job_id,
                'input_file': os.path.basename(job.input_file.name),
                'start_time': job.start_time,
