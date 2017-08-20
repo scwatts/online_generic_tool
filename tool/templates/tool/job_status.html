@@ -10,13 +10,16 @@
         <th>Input file</th>
         <th>Status</th>
         <th>Time submitted</th>
+        <th>Files</th>
     </tr>
     {% for job in user_job_list %}
     <tr>
         <td>{{ job.job_name }}</td>
-        <td><a href="{% url 'serve_file' fileurl=job.input_file.url %}">{{ job.input_file.basename }}</a></td>
+        <td>{{ job.input_file.basename }}</td>
         <td>{{ job.status }}</td>
-        <td>{{ job.datetime }}</td>
+        <td>{{ job.start_time }}</td>
+        <td>{% if job.status == 'completed' %}<a href="{% url 'job_view' job_id=job.id %}">view
+                files</a>{% else %}not available{% endif %}</td>
     </tr>
     {% endfor %}
 </table>

@@ -1,3 +1,4 @@
+import pathlib
 import subprocess
 
 
@@ -6,6 +7,9 @@ from redis import Redis
 
 
 from django.conf import settings
+from django.utils import timezone
+
+from tool.models import Job
 
 
 def enqueue(function, *args, **kwargs):
@@ -17,7 +21,13 @@ def enqueue(function, *args, **kwargs):
     return queue.enqueue(function, *args, **kwargs)
 
 
-def submit_job(job_instance):
+def execute_job(job_id):
+    # Get the job instance
+    job_instance = Job.objects.get(id=job_id)
+
+    # Set job queue to active in SQL database
+    job_instance.job_queue = settings.REDIS_QUEUE_ACTIVE
+
     # Collect parameters and format to string
     # TODO: consider whether this is secure enough
     # TODO: is there a more efficient way to do this?
@@ -27,8 +37,9 @@ def submit_job(job_instance):
     params_str = ' '.join(['--%s %s' % (fn, fv) for fn, fv in param_gen if fv])
 
     # Add output directory to entry and parameter string
-    job_instance.output_dir.name = 'user_%s/run_%s/output/' % (job_instance.owner, job_instance.id)
-    params_str = '%s --outdir %s' % (params_str, job_instance.output_dir.path)
+    job_instance.run_dir.name = 'user_%s/run_%s/' % (job_instance.owner, job_instance.id)
+    output_dir = pathlib.Path(job_instance.run_dir.path, 'output')
+    params_str = '%s --outdir %s --prefix run' % (params_str, output_dir)
 
     # Finialise command
     # TEMP: binary
@@ -46,4 +57,7 @@ def submit_job(job_instance):
         job_instance.status = 'failed'
     else:
         job_instance.status = 'completed'
+        job_instance.job_queue = ''
+        job_instance.redis_id = ''
+    job_instance.duration = timezone.now() - job_instance.start_time
     job_instance.save()

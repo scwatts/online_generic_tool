@@ -5,3 +5,10 @@ table.job_table tr:nth-child(even) {
 table.job_table td {
     padding: 4px;
 }
+
+ul.file_list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}

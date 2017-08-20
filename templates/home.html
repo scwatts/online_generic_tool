@@ -5,4 +5,6 @@
 
 {% block content %}
 <p>Welcome{% if user.is_authenticated %} {{ user.username }}{% endif %}!</p>
+<p>There are currently {{ jobs_running }} jobs running and {{ jobs_queued }} jobs queued. So far we
+have completed {{ jobs_completed }} jobs.</p>
 {% endblock %}
