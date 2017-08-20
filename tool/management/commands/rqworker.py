@@ -6,8 +6,6 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 
-# Provide queue names to listen to as arguments to this script,
-# similar to rq worker
 class Command(BaseCommand):
 
     def add_arguments(self, parser):
@@ -26,7 +24,7 @@ class Command(BaseCommand):
         if options['queues']:
             queues = options['queues']
         else:
-            queues = settings.REDIS_QUEUES
+            queues = [settings.REDIS_QUEUE_ACTIVE]
 
         # Get connection and do work
         redis_connection = Redis(host=settings.REDIS_HOST,

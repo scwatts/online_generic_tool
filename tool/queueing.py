@@ -12,9 +12,9 @@ def enqueue(function, *args, **kwargs):
     redis_connection = Redis(host=settings.REDIS_HOST,
                              port=settings.REDIS_PORT,
                              db=settings.REDIS_DB)
-    queue = Queue(connection=redis_connection)
+    queue = Queue(settings.REDIS_QUEUE_BLOCKED, connection=redis_connection)
 
-    queue.enqueue(function, *args, **kwargs)
+    return queue.enqueue(function, *args, **kwargs)
 
 
 def submit_job(job_instance):
@@ -44,7 +44,6 @@ def submit_job(job_instance):
     # Check process return code
     if p.returncode != 0:
         job_instance.status = 'failed'
-        job_instance.stderr = p.stderr
     else:
         job_instance.status = 'completed'
     job_instance.save()

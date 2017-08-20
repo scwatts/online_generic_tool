@@ -88,7 +88,8 @@ DATABASES = {
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
-REDIS_QUEUES = ['default']
+REDIS_QUEUE_ACTIVE = 'active'
+REDIS_QUEUE_BLOCKED = 'blocked'
 REDIS_DB = 0
 
 

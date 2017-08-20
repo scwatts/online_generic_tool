@@ -5,6 +5,7 @@ import re
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_list_or_404, redirect
 from django.contrib import messages
+from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
 
@@ -27,10 +28,16 @@ def job_submit(request):
         if form.is_valid():
             # Commit job info to database and write file to disk
             # TODO: validate content of input file
-            job = form.save(request)
+            job_model = form.save(request)
 
             # Queue the job
-            tool.queueing.enqueue(tool.queueing.submit_job, job)
+            redis_job = tool.queueing.enqueue(tool.queueing.submit_job, job_model)
+
+            # Save job id and queue to SQL database
+            job_model.redis_id = redis_job.get_id()
+            job_model.job_queue = settings.REDIS_QUEUE_BLOCKED
+            job_model.save()
+
             messages.success(request, 'Job submitted', extra_tags='alert-success')
     else:
         form = JobSubmissionForm()

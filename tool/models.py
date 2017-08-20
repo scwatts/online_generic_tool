@@ -15,7 +15,10 @@ class Job(models.Model):
     status = models.CharField(max_length=32)
     input_file = models.FileField(upload_to=user_run_input_directory)
     output_dir = models.FileField()
-    stderr = models.TextField(blank=True)
+
+    # TODO: determine length of redis ids
+    redis_id = models.CharField(max_length=255)
+    job_queue = models.CharField(max_length=255)
 
 
 class JobParameters(models.Model):
