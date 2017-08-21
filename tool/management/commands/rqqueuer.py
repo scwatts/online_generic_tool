@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
             with rq.Connection(redis_connection) as conn:
                 # Get count of idle workers
-                idle_worker_count = get_idle_work_count(conn)
+                idle_worker_count = get_idle_work_count()
 
                 # TODO: implement limit for total jobs a user can have active
                 for owner in owner_jobs:
@@ -63,13 +63,13 @@ class Command(BaseCommand):
                     job_model.save()
 
                     # Update number of idle workers after a small delay
-                    idle_worker_count = get_idle_work_count(conn)
+                    idle_worker_count = get_idle_work_count()
 
             # Loop every couple of minutes
             time.sleep(options['interval'])
 
 
-def get_idle_work_count(rq_connection):
+def get_idle_work_count():
     # Function to match worker on active queues
     def worker_on_active_queue(worker):
         queue_names = (q.name for q in worker.queues)

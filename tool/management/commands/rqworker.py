@@ -1,3 +1,6 @@
+import os
+
+
 from redis import Redis
 from rq import Connection, Worker
 

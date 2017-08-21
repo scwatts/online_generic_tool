@@ -1,4 +1,3 @@
-from django.urls import reverse_lazy
 from django.conf.urls import url
 
 from . import views

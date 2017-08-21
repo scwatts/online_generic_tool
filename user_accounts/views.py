@@ -2,7 +2,7 @@ import datetime
 import hashlib
 import os
 
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
@@ -14,7 +14,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash, get_user_model, logout as auth_logout
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm, AuthenticationForm
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
 
 from django.core.mail import send_mail
 
@@ -26,7 +26,6 @@ from django.utils import timezone
 
 from .forms import CustomUserCreationForm, EmailChangeForm, EmailVerifyForm
 from .models import Profile, User
-from .decorators import requires_verified_email
 
 
 @sensitive_post_parameters()
@@ -42,7 +41,7 @@ def register_account(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(request=request)
+            form.save(request=request)
             return HttpResponseRedirect(reverse('register_account_done'))
     else:
         form = CustomUserCreationForm()

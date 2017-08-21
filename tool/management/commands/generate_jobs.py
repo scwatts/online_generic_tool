@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 }
 
         # Populate with data
-        for user, details_list in data.items():
+        for details_list in data.values():
             for details in details_list:
                 job_model = Job()
                 job_model.job_name = details['job_name']
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 job_model.save()
 
                 # Queue the job
-                redis_job = tool.queueing.enqueue(tool.queueing.submit_job, job_model)
+                redis_job = tool.queueing.enqueue(tool.queueing.execute_job, job_model.id)
 
                 # Save job id and queue to SQL database
                 job_model.redis_id = redis_job.get_id()
