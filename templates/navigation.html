@@ -1,15 +1,19 @@
-<div class='navigation'>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="{% url 'job_submit' %}">Submit job</a></li>
-        <li><a href="{% url 'job_status' %}">Job status</a></li>
-        <li><a href="{% url 'account' %}">Manage account</a></li>
-        {% if user.is_authenticated %}
-            <li style="float:right"><a href="{% url 'logout' %}">Logout</a></li>
-            <li style="float:right"><a class="active" href="{% url 'account' %}">{{ user.username }}</a></li>
-        {% else %}
-            <li style="float:right"><a href="{% url 'register_account' %}">Register</a></li>
-            <li style="float:right"><a class="active" href="{% url 'login' %}">Login</a></li>
-        {% endif %}
-    </ul>
-</div>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="{% url 'job_submit' %}">Submit job</a></li>
+            <li><a href="{% url 'job_status' %}">Job status</a></li>
+            <li><a href="{% url 'account' %}">Manage account</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+            <li style="float:right"><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"</span> Logout</a></li>
+            <li style="float:right"><a class="active" href="{% url 'account' %}"><span class="glyphicon glyphicon-cog"</span> {{ user.username }}</a></li>
+            {% else %}
+            <li style="float:right"><a href="{% url 'register_account' %}"><span class="glyphicon glyphicon-user"</span> Register</a></li>
+            <li style="float:right"><a class="active" href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"</span> Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
