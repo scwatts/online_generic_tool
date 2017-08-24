@@ -4,23 +4,29 @@
 {% block content_title %}<h1>Job Status</h1>{% endblock %}
 
 {% block content %}
-<table class='job_table'>
-    <tr>
-        <th>Job name</th>
-        <th>Input file</th>
-        <th>Status</th>
-        <th>Time submitted</th>
-        <th>Files</th>
-    </tr>
-    {% for job in user_job_list %}
-    <tr>
-        <td>{{ job.job_name }}</td>
-        <td>{{ job.input_file.basename }}</td>
-        <td>{{ job.status }}</td>
-        <td>{{ job.start_time }}</td>
-        <td>{% if job.status == 'completed' %}<a href="{% url 'job_view' job_id=job.id %}">view
-                files</a>{% else %}not available{% endif %}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Job name</th>
+                <th>Input file</th>
+                <th>Status</th>
+                <th>Time submitted</th>
+                <th>Files</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in user_job_list %}
+            <tr>
+                <td>{{ job.job_name }}</td>
+                <td>{{ job.input_file.basename }}</td>
+                <td>{{ job.status }}</td>
+                <td>{{ job.start_time }}</td>
+                <td>{% if job.status == 'completed' %}<a href="{% url 'job_view' job_id=job.id %}">view
+                        files</a>{% else %}not available{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
