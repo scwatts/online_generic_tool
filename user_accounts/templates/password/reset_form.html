@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
+{% load tool_extra %}
 
 {% block title %}Reset password{% endblock %}
 {% block content_title %}<h1>Reset password</h1>{% endblock %}
 
 {% block content %}
 <p>Forgotten your password? Enter your email address below, and we'll email instructions for setting a new one.</p>
-<form method="post">{% csrf_token %}
-    {{ form.email.errors }}
-    <p><label for="id_email">Email address:<label> {{ form.email }} <input type="submit" value="Reset my password" /></p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.email | bootstrap_form }}
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Reset my password</button>
+    </div>
 </form>
 {% endblock %}

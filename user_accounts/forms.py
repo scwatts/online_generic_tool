@@ -26,14 +26,13 @@ class CustomUserCreationForm(UserCreationForm):
         field_classes = {'username': UsernameField}
 
 
-    def validate(self):
-        # Call parent implementation
-        super(CustomUserCreationForm, self).validate()
-
+    def clean_email(self):
         # Email must not be in use
         matching_emails = User.objects.filter(email=self.cleaned_data['email']).values('email')
         if matching_emails:
             raise forms.ValidationError(self.error_messages['email_exists'], code='email_exists')
+
+        return self.cleaned_data['email']
 
 
     def save(self, commit=True, request=None):
@@ -75,7 +74,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 class EmailChangeForm(forms.Form):
 
-    email = forms.EmailField(label="Email", max_length=254)
+    email = forms.EmailField(label="New email address", max_length=254)
 
 
     error_messages = {
@@ -88,14 +87,13 @@ class EmailChangeForm(forms.Form):
         super(EmailChangeForm, self).__init__(*args, **kwargs)
 
 
-    def validate(self):
-        # Call parent implementation
-        super(EmailChangeForm, self).validate()
-
+    def clean_email(self):
         # Email must not be in use
-        matching_emails = User.objects.filter(email=self.cleaned_data['email']).values('email')
+        matching_emails = User.objects.all().filter(email=self.cleaned_data['email']).values('email')
         if matching_emails:
             raise forms.ValidationError(self.error_messages['email_exists'], code='email_exists')
+
+        return self.cleaned_data['email']
 
 
     def save(self):

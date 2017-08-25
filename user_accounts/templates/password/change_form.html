@@ -1,50 +1,16 @@
 {% extends 'account/base.html' %}
+{% load tool_extra %}
 
 {% block title %}Change password{% endblock %}
 {% block content_title %}<h1>Change password</h1>{% endblock %}
 
 {% block account_content %}
-    <form action='' method="POST">
+    <p>Please provide your current password for the sake of security.</p>
+    <form method="post">
         {% csrf_token %}
-        <div>
-            {% if form.errors %}
-                <p class="errornote">
-                    {% if form.errors.items|length == 1 %}Please correct the error below.{% else %}Please correct the errors below.{% endif %}
-                    </p>
-            {% endif %}
-
-
-            <p>Please enter your old password, for security's sake, and then enter your new password twice so we can verify you typed it in correctly.</p>
-
-            <fieldset class="module aligned wide">
-
-                <div class="form-row">
-                    {{ form.old_password.errors }}
-                    {{ form.old_password.label_tag }} {{ form.old_password }}
-                </div>
-
-                <div class="form-row">
-                    {{ form.new_password1.errors }}
-                    {{ form.new_password1.label_tag }} {{ form.new_password1 }}
-                    {% if form.new_password1.help_text %}
-                        <p class="help">{{ form.new_password1.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-
-                <div class="form-row">
-                    {{ form.new_password2.errors }}
-                    {{ form.new_password2.label_tag }} {{ form.new_password2 }}
-                    {% if form.new_password2.help_text %}
-                        <p class="help">{{ form.new_password2.help_text|safe }}</p>
-                    {% endif %}
-                </div>
-
-            </fieldset>
-
-            <div class="submit-row">
-                <input type="submit" value="Change my password" class="default" />
-            </div>
-
+        {{ form | bootstrap_form }}
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Change my password</button>
         </div>
     </form>
 {% endblock %}

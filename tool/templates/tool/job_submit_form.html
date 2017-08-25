@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
+{% load tool_extra %}
 
 {% block title %}Submit job{% endblock %}
 {% block content_title %}<h1>Submit job</h1>{% endblock %}
 
 {% block content %}
-    <form action='' method="POST", enctype="multipart/form-data">
+<div class="col-lg-6 col-lg-offset-2">
+    <form action='' method="post", enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Submit">
+        {{ form | bootstrap_form }}
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </form>
+</div>
 {% endblock %}

@@ -12,9 +12,11 @@
             {% include 'header_content.html' %}
             {% include 'navigation.html' %}
             <div class="content">
-                {% block content_title %}{% endblock %}
-                {% include 'messages.html' %}
-                {% block content %}{% endblock %}
+                <div class="col-lg-12">
+                    {% block content_title %}{% endblock %}
+                    {% include 'messages.html' %}
+                    {% block content %}{% endblock %}
+                </div>
             </div>
         </div>
     </body>

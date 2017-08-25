@@ -1,14 +1,23 @@
 {% extends 'account/base.html' %}
+{% load tool_extra %}
 
 {% block title %}Verify email{% endblock %}
 {% block content_title %}<h1>Verify email</h1>{% endblock %}
 
 {% block account_content %}
-<p>Please enter token to verify email</p>
-<form method="post">
-    {% csrf_token %}
-    <p><label for="id_token">Verification token:<label> {{ form.token }} <input type="submit" value="Verify email" /></p>
-</form>
-<p>If you have not recieved your verification token, you can try resending it</p>
-<p><form method="get" action="{% url 'resend_verification' %}"><input type="submit" value="Resend verification" /></p>
+    <p>Please enter token to verify email</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.token | bootstrap_form }}
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Verify my email</button>
+        </div>
+    </form>
+
+    <p>If you have not recieved your verification token, you can try resending it</p>
+    <form method="get" action="{% url 'resend_verification' %}">
+        <div class="form-group">
+            <button type="submit" class="btn">Resend verification</button>
+        </div>
+    </form>
 {% endblock %}

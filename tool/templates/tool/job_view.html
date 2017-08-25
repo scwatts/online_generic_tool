@@ -5,9 +5,27 @@
 
 {% block content %}
 <p>Your job with input <b>{{ input_file }}</b> started at <b>{{ start_time }}</b> and run for <b>{{ duration }}</b>.</p>
-<ul class='file_list'>
-    {% for file in files %}
-    <li><a href="{% url 'serve_file' run=job_id directory='output' filename=file %}">{{ file }}</a></li>
-    {% endfor %}
-</ul>
+
+<div class='col-lg-5 col-lg-offset-3'>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Download</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for file in files %}
+                <tr>
+                    <td>{{ file }}</td>
+                    <td><a href="{% url 'serve_file' run=job_id directory='output' filename=file %}">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                    </a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

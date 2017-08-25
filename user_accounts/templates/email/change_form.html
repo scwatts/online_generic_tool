@@ -1,13 +1,16 @@
 {% extends 'account/base.html' %}
+{% load tool_extra %}
 
 {% block title %}Update email{% endblock %}
 {% block content_title %}<h1>Update email</h1>{% endblock %}
 
 {% block account_content %}
-<p>{% if user.email %}Your current verified email is {{ user.email }}{% else %}You currently have no verified emails{% endif %}. To update this, enter a new email address below.</p>
-<form method="post">
-    {% csrf_token %}
-    {{ form.email.errors }}
-    <p><label for="id_email">New email address:<label> {{ form.email }} <input type="submit" value="Change my email" /></p>
-</form>
+    <p>{% if user.email %}Your current verified email is <b>{{ user.email }}</b>{% else %}You currently have no verified emails{% endif %}. To update this, enter a new email address below.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.email | bootstrap_form }}
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Change my email</button>
+        </div>
+    </form>
 {% endblock %}

@@ -11,15 +11,17 @@
             {% include 'header_content.html' %}
             {% include 'navigation.html' %}
             <div class="content">
-                {% block content_title %}{% endblock %}
-                <div class="row">
-                <div class="col-lg-3">
-                    {% include 'account/navigation.html' %}
-                </div>
-                <div class="col-lg-9">
-                    <div class='account_content'>
-                    {% include 'messages.html' %}
-                    {% block account_content %}{% endblock %}
+                <div class="col-lg-12">
+                    {% block content_title %}{% endblock %}
+                    <div class="row">
+                    <div class="col-lg-3">
+                        {% include 'account/navigation.html' %}
+                    </div>
+                    <div class="col-lg-9">
+                        <div class='account_content'>
+                        {% include 'messages.html' %}
+                        {% block account_content %}{% endblock %}
+                        </div>
                     </div>
                 </div>
             </div>

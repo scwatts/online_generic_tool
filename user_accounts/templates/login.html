@@ -1,12 +1,22 @@
 {% extends 'base.html' %}
+{% load tool_extra %}
 
 {% block title %}Login{% endblock %}
 {% block content_title %}<h1>Login</h1>{% endblock %}
 
 {% block content %}
-    <form action='' method="POST">
+<div class="col-lg-5 col-lg-offset-3">
+    <form action='' method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Log-in">
+        {{ form | bootstrap_form }}
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
     </form>
+    <form method="get" action="{% url 'password_reset' %}">
+        <div class="form-group">
+            <button type="submit" class="btn">Reset password</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
