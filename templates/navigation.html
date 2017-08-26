@@ -1,19 +1,24 @@
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="{% url 'job_submit' %}">Submit job</a></li>
-            <li><a href="{% url 'job_status' %}">Job status</a></li>
-            <li><a href="{% url 'account' %}">Manage account</a></li>
+{% load template_extra %}
+    <nav class="navbar navbar-toggleable-md navbar-expand-lg navbar-dark bg-dark">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarDropDown" aria-controls="navbarDropDown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="#">Navbar</a>
+
+      <div class="collapse navbar-collapse" id="navbarDropDown">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item{% if request|current_url:'home_page' %} active{% endif %}"><a class="nav-link" href="{% url 'home_page' %}">Home</a></li>
+            <li class="nav-item{% if request|current_url:'job_submit' %} active{% endif %}"><a class="nav-link" href="{% url 'job_submit' %}">Submit job</a></li>
+            <li class="nav-item{% if request|current_url:'job_status' %} active{% endif %}"><a class="nav-link" href="{% url 'job_status' %}">Job status</a></li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
+        <ul class="navbar-nav">
             {% if user.is_authenticated %}
-            <li style="float:right"><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"</span> Logout</a></li>
-            <li style="float:right"><a class="active" href="{% url 'account' %}"><span class="glyphicon glyphicon-cog"</span> {{ user.username }}</a></li>
+            <li class="nav-item{% if request|current_url:'account' %} active{% endif %}" style="float:right"><a class="nav-link" class="active" href="{% url 'account' %}"><i class="fa fa-cog" aria-hidden="true"></i> {{ user.username }}</a></li>
+            <li class="nav-item" style="float:right"><a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
             {% else %}
-            <li style="float:right"><a href="{% url 'register_account' %}"><span class="glyphicon glyphicon-user"</span> Register</a></li>
-            <li style="float:right"><a class="active" href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"</span> Login</a></li>
+            <li class="nav-item{% if request|current_url:'login' %} active{% endif %}" ><a class="nav-link" class="active" href="{% url 'login' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Login</a></li>
+            <li class="nav-item{% if request|current_url:'register_account' %} active{% endif %}" ><a class="nav-link" href="{% url 'register_account' %}"><i class="fa fa-user" aria-hidden="true"></i> Register</a></li>
             {% endif %}
         </ul>
-    </div>
-</nav>
+      </div>
+    </nav>

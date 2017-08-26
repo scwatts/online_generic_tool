@@ -1,8 +1,8 @@
-{% load user_accounts_extra %}
+{% load template_extra %}
 
-<ul class="nav nav-pills nav-stacked">
-    <li{% if request|current_url:'account' %} class="active"{% endif %}><a href="{% url 'account' %}">Overview</a></li>
-    <li{% if request|current_url:'email_change' %} class="active"{% endif %}><a href="{% url 'email_change' %}">Change email address</a></li>
-    <li{% if request|current_url:'password_change' %} class="active"{% endif %}><a href="{% url 'password_change' %}">Change password</a></li>
-    <li{% if request|current_url:'email_verify' %} class="active"{% endif %}><a href="{% url 'email_verify' %}">Verify email</a></li>
-</ul>
+<div class="nav nav-pills flex-column">
+    <a class="nav-link{% if request|current_url:'account' %} active{% endif %}" href="{% url 'account' %}">Overview</a></li>
+    <a class="nav-link{% if request|current_url:'email_change' %} active{% endif %}" href="{% url 'email_change' %}">Change email address</a></li>
+    <a class="nav-link{% if request|current_url:'password_change' %} active{% endif %}" href="{% url 'password_change' %}">Change password</a></li>
+    <a class="nav-link{% if request|current_url:'email_verify' %} active{% endif %}" href="{% url 'email_verify' %}">Verify email</a></li>
+</div>

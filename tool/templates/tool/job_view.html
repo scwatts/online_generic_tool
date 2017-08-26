@@ -20,7 +20,7 @@
                 <tr>
                     <td>{{ file }}</td>
                     <td><a href="{% url 'serve_file' run=job_id directory='output' filename=file %}">
-                        <span class="glyphicon glyphicon-download-alt"></span>
+                            <i class="fa fa-download" aria-hidden="true"></i>
                     </a></td>
                 </tr>
             {% endfor %}
