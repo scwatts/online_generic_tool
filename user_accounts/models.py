@@ -7,7 +7,7 @@ class User(AbstractUser):
     # Also require email to be unique among all users
     first_name = models.CharField('first name', max_length=30)
     last_name = models.CharField('last name', max_length=150)
-    email = models.EmailField('email address', unique=True, null=True)
+    email = models.EmailField('email address', null=True)
 
     # Status of email verification
     is_verified = models.BooleanField(
