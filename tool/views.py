@@ -126,11 +126,13 @@ class ServeFile(View):
 # TODO: this may fit better somewhere else
 def xsendfile(request, filepath):
     if settings.PROD:
-        response = HttpResponse()
-        response['X-Accel-Redirect'] = filepath.encode('utf-8')
+        response = HttpResponse(content_type='application/octet-stream')
+        fp = pathlib.Path('/serve_files', filepath)
+        response['X-Accel-Redirect'] = str(fp).encode('utf-8')
+        response['Content-Disposition'] = 'inline; filename=%s' % filepath.name
         return response
     else:
         with filepath.open('r') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response = HttpResponse(fh.read(), content_type='application/octet-stream')
             response['Content-Disposition'] = 'inline; filename=%s' % filepath.name
         return response
