@@ -43,8 +43,7 @@ def execute_job(job_id):
     params_str = '%s --outdir %s --prefix %s' % (params_str, output_dir, prefix)
 
     # Finialise command
-    # TEMP: binary
-    binary = '/home/stephen/work/development/online_generic_tool/prokka/bin/prokka'
+    binary = settings.ENTRY_POINT
     cmd_template = '%s %s %s'
     cmd = cmd_template % (binary, params_str, job_instance.input_file.path)
 

@@ -145,3 +145,7 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = 'home_page'
 AUTH_USER_MODEL = 'user_accounts.User'
 LOGIN_URL = 'login'
+
+
+# Pipeline defaults
+ENTRY_POINT = '/usr/bin/prokka'
