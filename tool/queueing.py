@@ -18,7 +18,7 @@ def enqueue(function, *args, **kwargs):
                              db=settings.REDIS_DB)
     queue = Queue(settings.REDIS_QUEUE_BLOCKED, connection=redis_connection)
 
-    return queue.enqueue(function, *args, **kwargs)
+    return queue.enqueue(function, *args, timeout=settings.JOB_TIMEOUT, **kwargs)
 
 
 def execute_job(job_id):

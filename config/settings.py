@@ -149,3 +149,4 @@ LOGIN_URL = 'login'
 
 # Pipeline defaults
 ENTRY_POINT = '/usr/bin/prokka'
+JOB_TIMEOUT = 900 # 15 minutes
