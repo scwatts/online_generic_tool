@@ -18,6 +18,14 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # Get connection to redis so we can retrieve worker info
+        redis_connection = redis.Redis(host=settings.REDIS_HOST,
+                                        port=settings.REDIS_PORT,
+                                        db=settings.REDIS_DB)
+        # Get the queues
+        active_queue = rq.Queue(settings.REDIS_QUEUE_ACTIVE, connection=redis_connection)
+        blocked_queue = rq.Queue(settings.REDIS_QUEUE_BLOCKED, connection=redis_connection)
+
         while True:
             # Get jobs by user and total count
             jobs = Job.objects.filter(status='submitted')
@@ -28,15 +36,6 @@ class Command(BaseCommand):
                     owner_jobs[job.owner].append(job)
                 except KeyError:
                     owner_jobs[job.owner] = [job]
-
-            # Get connection to redis so we can retrieve worker info
-            redis_connection = redis.Redis(host=settings.REDIS_HOST,
-                                           port=settings.REDIS_PORT,
-                                           db=settings.REDIS_DB)
-
-            # Get the queues
-            active_queue = rq.Queue(settings.REDIS_QUEUE_ACTIVE, connection=redis_connection)
-            blocked_queue = rq.Queue(settings.REDIS_QUEUE_BLOCKED, connection=redis_connection)
 
             with rq.Connection(redis_connection) as conn:
                 # Get count of idle workers
